@@ -35,23 +35,24 @@ def select_sort(sort_array, other_array):
                 sort_array[i], sort_array[j + i] = sort_array[j + i], sort_array[i]
                 other_array[i], other_array[j + i] = other_array[j + i], other_array[i]
                 
-year = '2015'
-inpath = 'F:\\GitHub\\species\\物种证明'+year+'整理好txt\\'
-outpath = 'F:\\GitHub\\species\\'+year+'output\\'
+years = ['2013','2014','2015']
 
-if not os.path.isdir(outpath.decode('utf8').encode('gbk')):
-    os.makedirs(outpath.decode('utf8').encode('gbk'))
-    print 'Create new directory:',outpath.decode('utf8').encode('gbk')
-    
-filenames = getFiles(inpath.decode('utf8').encode('gbk'))
-
-#Dict = Latin
-Dict = Hongmu
+Dict = Latin
+#Dict = Hongmu
 #Dict = Zhenxi
 
-for s in [year]:
+for year in years:
+    inpath = u'F:\\Cloud\\species\\%s\\' % year
+    outpath = u'F:\\GitHub\\species\\%soutput\\' % year
+    
+    if not os.path.isdir(outpath.encode('gbk')):
+        os.makedirs(outpath.encode('gbk'))
+        print 'Create new directory:',outpath.encode('gbk')
+        
+    filenames = getFiles(inpath.encode('gbk'))
+
     print '----------'
-    print '物种拉丁名：' + s
+    print '物种拉丁名：' + year
     print '----------'
     export_country_list = []
     mass_unit_list = []
@@ -73,7 +74,6 @@ for s in [year]:
             list1 = infile.readlines()
             list2 = [i.decode('gbk').encode('utf8').strip() for i in list1[:]]
             list3 = [i.split('\t') for i in list2[2:]]
-            
             
 #            result = [ i for i in list3 if s == DataToLatin[i[9]] ] # 计算单个树种
             result = [ i for i in list3 if DataToLatin[i[9]] in Dict ] # 计算全部树种
@@ -133,27 +133,27 @@ for s in [year]:
 #    for import_port in import_port_list:
 #        print import_port
 
-    print '--------------------species_list--------------------'
-    for species in species_list:
-        print species
-    print '--------------------export_country_list--------------------'
-    for export_country in export_country_list:
-        print export_country
-    print '--------------------export_port_list--------------------'
-    for export_port in export_port_list:
-        print export_port
-    print '--------------------import_port_list--------------------'
-    for import_port in import_port_list:
-        print import_port
-    print '--------------------goods_type_list--------------------'
-    for goods_type in goods_type_list:
-        print goods_type
-    print '--------------------mass_unit_list--------------------'
-    for mass_unit in mass_unit_list:
-        print mass_unit
-    print '--------------------origin_list--------------------'
-    for origin in origin_list:
-        print origin
+#    print '--------------------species_list--------------------'
+#    for species in species_list:
+#        print species
+#    print '--------------------export_country_list--------------------'
+#    for export_country in export_country_list:
+#        print export_country
+#    print '--------------------export_port_list--------------------'
+#    for export_port in export_port_list:
+#        print export_port
+#    print '--------------------import_port_list--------------------'
+#    for import_port in import_port_list:
+#        print import_port
+#    print '--------------------goods_type_list--------------------'
+#    for goods_type in goods_type_list:
+#        print goods_type
+#    print '--------------------mass_unit_list--------------------'
+#    for mass_unit in mass_unit_list:
+#        print mass_unit
+#    print '--------------------origin_list--------------------'
+#    for origin in origin_list:
+#        print origin
         
     for filename in filenames:
         fullname = filename[0] + '\\' + filename[1]
@@ -174,6 +174,14 @@ for s in [year]:
             for r in result:
            
                 for i in range(len(mass_unit_list)):
+
+                    if DictUnit[r[13]] == '小盒、容器、胶囊':
+                        if float(r[12]) <> int(float(r[12])):
+                            print r[0],r[12],r[13]
+                    if DictUnit[r[13]] == '箱':
+                        if float(r[12]) <> int(float(r[12])):
+                            print r[0],r[12],r[13]
+                            
                     if DictUnit[r[13]] == mass_unit_list[i]:
                         mass_sum[i]+=float(r[12])
                         
@@ -217,53 +225,72 @@ for s in [year]:
 #        print mass_unit_list
 #        print cmonetary_unit_list
         
-        print u'总数量: '
-        for i in range(len(mass_unit_list)):
-            print str(mass_sum[i])+':'+str(mass_unit_list[i])
-            
-        print u'总金额: '
-        for i in range(len(cmonetary_unit_list)):
-            print str(cmonetary_sum[i])+':'+str(cmonetary_unit_list[i])
-            
-        print u'进口份额: '
-        for i in range(len(export_country_list)):
-            print str(export_country_list[i])+':'+str(export_country_sum[i])
-            
-        print u'出口口岸: '
-        for i in range(len(export_port_list)):
-            print str(export_port_list[i])+':'+str(export_port_sum[i])
-            
-        print u'进口口岸: '
-        for i in range(len(import_port_list)):
-            print str(import_port_list[i])+':'+str(import_port_sum[i])
-            
-        print u'货物类型: '
-        for i in range(len(goods_type_list)):
-            print str(goods_type_list[i])+':'+str(goods_type_sum[i])
-            
-        print u'原产国： '
-        print country_origin_list
-        
-        print u'来源： '
-        print origin_list
-    
-        print '----------'              
+#        print u'总数量: '
+#        for i in range(len(mass_unit_list)):
+#            print str(mass_sum[i])+':'+str(mass_unit_list[i])
+#            
+#        print u'总金额: '
+#        for i in range(len(cmonetary_unit_list)):
+#            print str(cmonetary_sum[i])+':'+str(cmonetary_unit_list[i])
+#            
+#        print u'进口份额: '
+#        for i in range(len(export_country_list)):
+#            print str(export_country_list[i])+':'+str(export_country_sum[i])
+#            
+#        print u'出口口岸: '
+#        for i in range(len(export_port_list)):
+#            print str(export_port_list[i])+':'+str(export_port_sum[i])
+#            
+#        print u'进口口岸: '
+#        for i in range(len(import_port_list)):
+#            print str(import_port_list[i])+':'+str(import_port_sum[i])
+#            
+#        print u'货物类型: '
+#        for i in range(len(goods_type_list)):
+#            print str(goods_type_list[i])+':'+str(goods_type_sum[i])
+#            
+#        print u'原产国： '
+#        print country_origin_list
+#        
+#        print u'来源： '
+#        print origin_list
+#    
+#        print '----------'
+#==============================================================================
+# 单位转换          
+#==============================================================================
+#        for i in range(len(mass_unit_list)):
+#            if mass_unit_list[i] == '立方米':
+#                print mass_sum[i], mass_unit_list[i]
+#                
+#        for i in range(len(mass_unit_list)):
+#            if mass_unit_list[i] == '千克':
+#                print mass_sum[i], mass_unit_list[i]
+#                print '密度：%s千克/立方米' % (str(density[s]*1000.0))
+#                print '%s千克 = %s立方米' % (mass_sum[i],mass_sum[i]/density[s]/1000.0)
+#                
+#                if '立方米' not in mass_unit_list:
+#                    mass_unit_list.append('立方米')
+#                    mass_sum.append(mass_sum[i]/density[s]/1000.0)
+#                else:
+#                    for j in range(len(mass_unit_list)):
+#                        if mass_unit_list[j] == '立方米':
+#                            mass_sum[j] = mass_sum[j] + mass_sum[i]/density[s]/1000.0
 #==============================================================================
 # 输出 csv
 #==============================================================================
 #        outname = outpath + s + '_' + LatinToChinese[s] + '_' + year + '.csv' # 计算单个树种
         if Dict == Latin:
-            s = '全部树种'
+            s = u'全部树种'
         if Dict == Hongmu:
-            s = '红木类'
+            s = u'红木类'
         if Dict == Zhenxi:
-            s = '濒危树种'
+            s = u'濒危树种'
         outname = outpath + year + '_' + s + '_' + 'All' + '.csv' # 计算全部树种
 #==============================================================================
 # 输出Excel
 #==============================================================================
         excel_name = outname[:-4] + '.xlsx'
-        excel_name = excel_name.decode('utf8')
         excel_name = excel_name.encode('gbk')
         workbook = xlsxwriter.Workbook(excel_name)
         
@@ -276,7 +303,7 @@ for s in [year]:
         # Add the worksheet data that the charts will refer to.
 #        worksheet.write_row('A'+str(row_number), [ u'物种拉丁名', s.decode('utf8') ], bold); row_number += 1 # 计算单个树种
 #        worksheet.write_row('A'+str(row_number), [ u'物种中文名', LatinToChinese[s].decode('utf8') ], bold); row_number += 1 # 计算单个树种
-        worksheet.write_row('A'+str(row_number), [ u'类型', s.decode('utf8') ], bold); row_number += 1 # 计算全部树种
+        worksheet.write_row('A'+str(row_number), [ u'类型', s ], bold); row_number += 1 # 计算全部树种
         worksheet.write_row('A'+str(row_number), [ u'年份', year ], bold); row_number += 1
         row_number += 1
         
@@ -304,7 +331,7 @@ for s in [year]:
             'categories': '=Sheet1!$C$'+str(row_begin)+':$C$'+str(row_end),
             'values':     '=Sheet1!$D$'+str(row_begin)+':$D$'+str(row_end),
         })
-        chart1.set_title({'name': year + u'年' + s.decode('utf8') + u'进口份额'})
+        chart1.set_title({'name': year + u'年' + s + u'进口份额'})
         chart1.set_style(10)
         worksheet.insert_chart('G'+str(1), chart1, {'x_offset': 0, 'y_offset': 0})
 #==============================================================================
@@ -322,7 +349,7 @@ for s in [year]:
             'categories': '=Sheet1!$B$'+str(row_begin)+':$B$'+str(row_end),
             'values':     '=Sheet1!$C$'+str(row_begin)+':$C$'+str(row_end),
         })
-        chart2.set_title({'name': year + u'年' + s.decode('utf8') + u'出口口岸'})
+        chart2.set_title({'name': year + u'年' + s + u'出口口岸'})
         chart2.set_style(10)
         worksheet.insert_chart('G'+str(1+height), chart2, {'x_offset': 0, 'y_offset': 0})
 #==============================================================================
@@ -340,7 +367,7 @@ for s in [year]:
             'categories': '=Sheet1!$A$'+str(row_begin)+':$A$'+str(row_end),
             'values':     '=Sheet1!$B$'+str(row_begin)+':$B$'+str(row_end),
         })
-        chart3.set_title({'name': year + u'年' + s.decode('utf8') + u'进口口岸'})
+        chart3.set_title({'name': year + u'年' + s + u'进口口岸'})
         chart3.set_style(10)
         worksheet.insert_chart('G'+str(1+height*2), chart3, {'x_offset': 0, 'y_offset': 0})
 #==============================================================================
@@ -358,7 +385,7 @@ for s in [year]:
             'categories': '=Sheet1!$A$'+str(row_begin)+':$A$'+str(row_end),
             'values':     '=Sheet1!$B$'+str(row_begin)+':$B$'+str(row_end),
         })
-        chart4.set_title({'name': year + u'年' + s.decode('utf8') + u'货物类型'})
+        chart4.set_title({'name': year + u'年' + s + u'货物类型'})
         chart4.set_style(10)
         worksheet.insert_chart('G'+str(1+height*3), chart4, {'x_offset': 0, 'y_offset': 0})
 #==============================================================================

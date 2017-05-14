@@ -36,7 +36,7 @@ def select_sort(sort_array, other_array):
                 other_array[i], other_array[j + i] = other_array[j + i], other_array[i]
                 
 year = '2015'
-inpath = 'F:\\GitHub\\species\\物种证明'+year+'整理好txt\\'
+inpath = 'F:\\Cloud\\species\\'+year+'\\'
 outpath = 'F:\\GitHub\\species\\'+year+'output\\'
 
 if not os.path.isdir(outpath.decode('utf8').encode('gbk')):
@@ -54,7 +54,7 @@ import_port_top3 = []
 export_port_top3 = []
 origin_country_top3 = []
 
-for s in Latin[0:5]:
+for s in Latin[20:]:
     print '----------'
     print '物种拉丁名：' + s
     print '----------'
@@ -72,7 +72,7 @@ for s in Latin[0:5]:
     for filename in filenames:
         fullname = filename[0] + '\\' + filename[1]
         fullname = fullname.decode('gbk').encode('gbk')
-        print 'Reading: ' + filename[1].decode('gbk')
+#        print 'Reading: ' + filename[1].decode('gbk')
         if isTextFile(filename[1]):
             infile = open(fullname,'r')
             list1 = infile.readlines()
@@ -148,7 +148,6 @@ for s in Latin[0:5]:
             list2 = [i.decode('gbk').encode('utf8').strip() for i in list1[:]]
             list3 = [i.split('\t') for i in list2[2:]]
             
-                
             result = [ i for i in list3 if s == DataToLatin[i[9]] ]
     
             for r in result:
@@ -157,6 +156,14 @@ for s in Latin[0:5]:
                     if DictUnit[r[13]] == mass_unit_list[i]:
                         mass_sum[i]+=float(r[12])
                         
+                    if DictUnit[r[13]] == '小盒、容器、胶囊':
+                        if len(r) == 81:
+                            print r[0],r[12],r[13],r[80]
+                            
+                    if DictUnit[r[13]] == '箱':
+                        if len(r) == 81:
+                            print r[0],r[12],r[13],r[80]
+                            
                 for i in range(len(cmonetary_unit_list)):
                     if r[39] == cmonetary_unit_list[i]:
                         cmonetary_sum[i]+=float(r[38])
@@ -227,7 +234,27 @@ for s in Latin[0:5]:
 #        print u'来源： '
 #        print origin_list
 #    
-#        print '----------'              
+#        print '----------'
+#==============================================================================
+# 单位转换          
+#==============================================================================
+#        for i in range(len(mass_unit_list)):
+#            if mass_unit_list[i] == '立方米':
+#                print mass_sum[i], mass_unit_list[i]
+                
+        for i in range(len(mass_unit_list)):
+            if mass_unit_list[i] == '千克':
+#                print mass_sum[i], mass_unit_list[i]
+#                print '密度：%s千克/立方米' % (str(density[s]*1000.0))
+#                print '%s千克 = %s立方米' % (mass_sum[i],mass_sum[i]/density[s]/1000.0)
+                
+                if '立方米' not in mass_unit_list:
+                    mass_unit_list.append('立方米')
+                    mass_sum.append(mass_sum[i]/density[s]/1000.0)
+                else:
+                    for j in range(len(mass_unit_list)):
+                        if mass_unit_list[j] == '立方米':
+                            mass_sum[j] = mass_sum[j] + mass_sum[i]/density[s]/1000.0
 #==============================================================================
 # 输出 csv
 #==============================================================================
@@ -254,7 +281,12 @@ for s in Latin[0:5]:
         
         worksheet.write_row('A'+str(row_number), [ u'总数量' ], bold); row_number += 1
         for i in range(len(mass_unit_list)):
-            worksheet.write_row('A'+str(row_number), [ mass_sum[i],str(mass_unit_list[i]).decode('utf8') ]); row_number += 1
+            if mass_unit_list[i] <> '千克': 
+                worksheet.write_row('A'+str(row_number), [ mass_sum[i],str(mass_unit_list[i]).decode('utf8') ]); row_number += 1
+        row_number += 1
+
+        worksheet.write_row('A'+str(row_number), [ u'参考密度' ], bold); row_number += 1
+        worksheet.write_row('A'+str(row_number), [ density[s], u'克/立方厘米' ]); row_number += 1
         row_number += 1
 
         worksheet.write_row('A'+str(row_number), [ u'总金额' ], bold); row_number += 1
@@ -356,21 +388,12 @@ for s in Latin[0:5]:
         latin_name.append(s.decode('utf8'))
         
         chinese_name.append(LatinToChinese[s].decode('utf8'))
-        
+            
         u = u''
         for i in range(len(mass_unit_list)):
-            u += u'%.2f%s\n' % (mass_sum[i], str(mass_unit_list[i]).decode('utf8'))
+            if mass_unit_list[i] <> '千克': 
+                u += u'%.2f%s\n' % (mass_sum[i], str(mass_unit_list[i]).decode('utf8'))
         import_number.append(u[:-1])
-
-
-        for i in range(len(mass_unit_list)):
-            if mass_unit_list[i] == '立方米':
-                print mass_sum[i], mass_unit_list[i]
-                print mass_sum[i]/density[s]
-            if mass_unit_list[i] == '千克':
-                print mass_sum[i], mass_unit_list[i]
-                print density[s]
-                print mass_sum[i]/density[s]
 
         import_money.append(u'%.2f' % float(sum(cmonetary_sum)/10000.0))
 
